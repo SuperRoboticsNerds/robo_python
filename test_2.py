@@ -33,12 +33,13 @@ class image_converter:
       print e
 
     (rows,cols) = cv_image.shape
-    if cols > 60 and rows > 60 :
-      cv2.circle(cv_image, (rows/2,cols/2), 10, 255)
+   # if cols > 60 and rows > 60 :
+    #  cv2.circle(cv_image, (rows/2,cols/2), 10, 255)
     #print cv_image[rows/2,cols/2]
     
     mindist = 10000000.0
     angle = 0.0
+    found=0
     #find closest point(s)
     for i in range(rows/4,3*rows/4):
       for j in range(cols):
@@ -46,34 +47,36 @@ class image_converter:
           mindist = cv_image[i,j]
           angle = -50 + j*100/cols
     #Define velocities
-    P = 0.1
-    if mindist > 1000 	or mindist<0.4:
+    P = 0.05
+    if mindist >= 0.8 or mindist<=0.4 or mindist == 'NaN':
       forward_speed = 0
       angular_speed = 0
+      found=0
     else:
-	if abs(angle)<10:
-	  forward_speed = 0.25
+        found=1
+	if abs(angle)<40:
+	  forward_speed = 0.5
 	  angular_speed = 0.0
         else:
-      	  forward_speed = 0.25
-          angular_speed = P*angle
-    print forward_speed,angular_speed
+      	  forward_speed = 0.15
+          angular_speed = -1*P*angle
+    print found, angle, forward_speed,angular_speed
 
     self.twist_msg.linear.x=forward_speed
     self.twist_msg.angular.z=angular_speed   
 
     #cv2.imshow("Image window", cv_image)
-   #cv2.waitKey(3)
+    #cv2.waitKey(3)
     item_print =self.bridge.cv2_to_imgmsg(cv_image)
 
     self.twist_pub.publish(self.twist_msg)
-    try:
-      self.image_pub.publish(item_print)
+    #try:
+     # self.image_pub.publish(item_print)
 
       
       #self.image_pub.publish(cv_image)
-    except CvBridgeError, e:
-      print e
+    #except CvBridgeError, e:
+     # print e
 
 def main(args):
   ic = image_converter()
