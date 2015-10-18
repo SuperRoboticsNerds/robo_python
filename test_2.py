@@ -48,7 +48,7 @@ class image_converter:
           angle = -50 + j*100/cols
     #Define velocities
     P = 0.05
-    if mindist >= 0.8 or mindist<=0.4 or mindist == 'NaN':
+    if mindist >= 0.8 or mindist<=0.4 or mindist == 'nan':
       forward_speed = 0
       angular_speed = 0
       found=0
